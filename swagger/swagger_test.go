@@ -313,6 +313,7 @@ func TestResourceListingAuthorizations(t *testing.T) {
 	`)
 }
 
+/*
 func TestApiDeclarationAuthorizations(t *testing.T) {
 	ws1 := new(restful.WebService)
 	ws1.Authorizations(models.Authorizations{"primary": []models.ScopeObject{}})
@@ -337,4 +338,4 @@ func TestApiDeclarationAuthorizations(t *testing.T) {
 	{
 		"primary": []
 	}`)
-}
+}*/

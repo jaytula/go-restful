@@ -27,7 +27,7 @@ type WebService struct {
 	apiVersion     string
 
 	dynamicRoutes  bool
-	authorizations models.Authorizations
+	authorizations models.AuthorizationsObject
 
 	// protects 'routes' if dynamic routes are enabled
 	routesLock sync.RWMutex
@@ -63,12 +63,12 @@ func (w *WebService) ApiVersion(apiVersion string) *WebService {
 }
 
 // Authorizations sets the Authorizations for this WebService to be used at Swagger API Declaration level
-func (w *WebService) Authorizations(authorizations models.Authorizations) *WebService {
+func (w *WebService) Authorizations(authorizations models.AuthorizationsObject) *WebService {
 	w.authorizations = authorizations
 	return w
 }
 
-func (w *WebService) GetAuthorizations() models.Authorizations {
+func (w *WebService) GetAuthorizations() models.AuthorizationsObject {
 	return w.authorizations
 }
 

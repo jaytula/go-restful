@@ -235,10 +235,9 @@ func (sws SwaggerService) composeDeclaration(ws *restful.WebService, pathPrefix 
 		voidString := "void"
 		for _, route := range routes {
 			operation := Operation{
-				Method:         route.Method,
-				Summary:        route.Doc,
-				Notes:          route.Notes,
-				Authorizations: ws.GetAuthorizations(),
+				Method:  route.Method,
+				Summary: route.Doc,
+				Notes:   route.Notes,
 				// Type gets overwritten if there is a write sample
 				DataTypeFields:   DataTypeFields{Type: &voidString},
 				Parameters:       []Parameter{},
