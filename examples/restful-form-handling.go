@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/emicklei/go-restful"
 	"github.com/gorilla/schema"
+	"github.com/jaytula/go-restful"
 	"io"
 	"net/http"
 )

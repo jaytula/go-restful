@@ -5,8 +5,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/emicklei/go-restful/log"
-	"github.com/emicklei/go-restful/swagger/models"
+	"github.com/jaytula/go-restful/log"
+	"github.com/jaytula/go-restful/swagger/models"
 )
 
 // Copyright 2013 Ernest Micklei. All rights reserved.

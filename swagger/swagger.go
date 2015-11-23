@@ -2,7 +2,7 @@
 // https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
 package swagger
 
-import "github.com/emicklei/go-restful/swagger/models"
+import "github.com/jaytula/go-restful/swagger/models"
 
 const swaggerVersion = "1.2"
 

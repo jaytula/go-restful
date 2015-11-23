@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/emicklei/go-restful"
+	"github.com/jaytula/go-restful"
 	"log"
 	"net/http"
 	"time"

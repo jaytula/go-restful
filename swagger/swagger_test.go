@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/emicklei/go-restful"
-	"github.com/emicklei/go-restful/swagger/models"
-	"github.com/emicklei/go-restful/swagger/test_package"
+	"github.com/jaytula/go-restful/swagger/models"
+	"github.com/jaytula/go-restful/swagger/test_package"
+	"github.com/jaytula/go-restful"
 )
 
 func TestInfoStruct_Issue231(t *testing.T) {
