@@ -2,6 +2,8 @@
 // https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
 package swagger
 
+import "github.com/emicklei/go-restful/swagger/models"
+
 const swaggerVersion = "1.2"
 
 // 4.3.3 Data Type Fields
@@ -28,11 +30,11 @@ type Item struct {
 
 // 5.1 Resource Listing
 type ResourceListing struct {
-	SwaggerVersion string          `json:"swaggerVersion"` // e.g 1.2
-	Apis           []Resource      `json:"apis"`
-	ApiVersion     string          `json:"apiVersion"`
-	Info           Info            `json:"info"`
-	Authorizations []Authorization `json:"authorizations,omitempty"`
+	SwaggerVersion string               `json:"swaggerVersion"` // e.g 1.2
+	Apis           []Resource           `json:"apis"`
+	ApiVersion     string               `json:"apiVersion"`
+	Info           Info                 `json:"info"`
+	Authorizations AuthorizationsObject `json:"authorizations,omitempty"`
 }
 
 // 5.1.2 Resource Object
@@ -51,13 +53,16 @@ type Info struct {
 	LicenseUrl        string `json:"licenseUrl,omitempty"`
 }
 
+// 5.1.4 Authorizations Object
+type AuthorizationsObject map[string]AuthorizationObject
+
 // 5.1.5
-type Authorization struct {
+type AuthorizationObject struct {
 	Type       string      `json:"type"`
 	PassAs     string      `json:"passAs"`
 	Keyname    string      `json:"keyname"`
-	Scopes     []Scope     `json:"scopes"`
-	GrantTypes []GrantType `json:"grandTypes"`
+	Scopes     []Scope     `json:"scopes,omitempty"`
+	GrantTypes []GrantType `json:"grantTypes,omitempty"`
 }
 
 // 5.1.6, 5.2.11
@@ -114,15 +119,15 @@ type TokenEndpoint struct {
 
 // 5.2 API Declaration
 type ApiDeclaration struct {
-	SwaggerVersion string          `json:"swaggerVersion"`
-	ApiVersion     string          `json:"apiVersion"`
-	BasePath       string          `json:"basePath"`
-	ResourcePath   string          `json:"resourcePath"` // must start with /
-	Apis           []Api           `json:"apis,omitempty"`
-	Models         ModelList       `json:"models,omitempty"`
-	Produces       []string        `json:"produces,omitempty"`
-	Consumes       []string        `json:"consumes,omitempty"`
-	Authorizations []Authorization `json:"authorizations,omitempty"`
+	SwaggerVersion string                `json:"swaggerVersion"`
+	ApiVersion     string                `json:"apiVersion"`
+	BasePath       string                `json:"basePath"`
+	ResourcePath   string                `json:"resourcePath"` // must start with /
+	Apis           []Api                 `json:"apis,omitempty"`
+	Models         ModelList             `json:"models,omitempty"`
+	Produces       []string              `json:"produces,omitempty"`
+	Consumes       []string              `json:"consumes,omitempty"`
+	Authorizations models.Authorizations `json:"authorizations,omitempty"`
 }
 
 // 5.2.2 API Object
@@ -135,16 +140,16 @@ type Api struct {
 // 5.2.3 Operation Object
 type Operation struct {
 	DataTypeFields
-	Method           string            `json:"method"`
-	Summary          string            `json:"summary,omitempty"`
-	Notes            string            `json:"notes,omitempty"`
-	Nickname         string            `json:"nickname"`
-	Authorizations   []Authorization   `json:"authorizations,omitempty"`
-	Parameters       []Parameter       `json:"parameters"`
-	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"` // optional
-	Produces         []string          `json:"produces,omitempty"`
-	Consumes         []string          `json:"consumes,omitempty"`
-	Deprecated       string            `json:"deprecated,omitempty"`
+	Method           string                `json:"method"`
+	Summary          string                `json:"summary,omitempty"`
+	Notes            string                `json:"notes,omitempty"`
+	Nickname         string                `json:"nickname"`
+	Authorizations   models.Authorizations `json:"authorizations,omitempty"`
+	Parameters       []Parameter           `json:"parameters"`
+	ResponseMessages []ResponseMessage     `json:"responseMessages,omitempty"` // optional
+	Produces         []string              `json:"produces,omitempty"`
+	Consumes         []string              `json:"consumes,omitempty"`
+	Deprecated       string                `json:"deprecated,omitempty"`
 }
 
 // 5.2.4 Parameter Object
@@ -179,6 +184,3 @@ type ModelProperty struct {
 	DataTypeFields
 	Description string `json:"description,omitempty"`
 }
-
-// 5.2.10
-type Authorizations map[string]Authorization

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/emicklei/go-restful"
+	"github.com/emicklei/go-restful/swagger/models"
 	"github.com/emicklei/go-restful/swagger/test_package"
 )
 
@@ -281,4 +282,59 @@ func TestIssue78(t *testing.T) {
 	if *ref != "swagger.TestItem" {
 		t.Fatal("wrong $ref:" + *ref)
 	}
+}
+
+func TestResourceListingAuthorizations(t *testing.T) {
+	config := Config{
+		Authorizations: AuthorizationsObject{"primary": AuthorizationObject{Type: "apiKey", PassAs: "query", Keyname: "api_key"}},
+	}
+	sws := newSwaggerService(config)
+	str, err := json.MarshalIndent(sws.produceListing(), "", "    ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	compareJson(t, string(str), `
+	{
+		"swaggerVersion": "1.2",
+		"apiVersion": "",
+		"apis": null,
+		"info": {
+		    "title": "",
+		    "description": ""
+		},
+		"authorizations": { 
+			"primary": {
+				"type": "apiKey",
+				"passAs": "query",
+				"keyname": "api_key"
+			}
+	  }	
+	}
+	`)
+}
+
+func TestApiDeclarationAuthorizations(t *testing.T) {
+	ws1 := new(restful.WebService)
+	ws1.Authorizations(models.Authorizations{"primary": []models.ScopeObject{}})
+
+	ws1.Route(ws1.GET("/object").To(dummy).Writes(test_package.TestStruct{}))
+
+	cfg := Config{
+		WebServicesUrl: "http://here.com",
+		ApiPath:        "/apipath",
+		WebServices:    []*restful.WebService{ws1},
+	}
+	sws := newSwaggerService(cfg)
+
+	decl := sws.composeDeclaration(ws1, "/")
+
+	str, err := json.MarshalIndent(decl.Authorizations, "", "    ")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	compareJson(t, string(str), `
+	{
+		"primary": []
+	}`)
 }

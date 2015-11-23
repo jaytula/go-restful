@@ -90,6 +90,7 @@ func (c *Container) Add(service *WebService) *Container {
 	// If registered on root then no additional specific mapping is needed
 	if !c.isRegisteredOnRoot {
 		pattern := c.fixedPrefixPath(service.RootPath())
+		pattern = service.rootPathPrefix + pattern
 		// check if root path registration is needed
 		if "/" == pattern || "" == pattern {
 			c.ServeMux.HandleFunc("/", c.dispatch)

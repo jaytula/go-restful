@@ -15,12 +15,13 @@ type RouteFunction func(*Request, *Response)
 
 // Route binds a HTTP Method,Path,Consumes combination to a RouteFunction.
 type Route struct {
-	Method   string
-	Produces []string
-	Consumes []string
-	Path     string // webservice root path + described path
-	Function RouteFunction
-	Filters  []FilterFunction
+	PathPrefix string
+	Method     string
+	Produces   []string
+	Consumes   []string
+	Path       string // webservice root path + described path
+	Function   RouteFunction
+	Filters    []FilterFunction
 
 	// cached values for dispatching
 	relativePath string
@@ -38,7 +39,7 @@ type Route struct {
 
 // Initialize for Route
 func (r *Route) postBuild() {
-	r.pathParts = tokenizePath(r.Path)
+	r.pathParts = tokenizePath(concatPath(r.PathPrefix, r.Path))
 }
 
 // Create Request and Response from their http versions

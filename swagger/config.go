@@ -31,4 +31,6 @@ type Config struct {
 	PostBuildHandler PostBuildDeclarationMapFunc
 	// Swagger global info struct
 	Info Info
+	// Provides information about the authorizations schemes allowed on this API.
+	Authorizations AuthorizationsObject
 }

@@ -144,7 +144,7 @@ func (sws SwaggerService) getListing(req *restful.Request, resp *restful.Respons
 }
 
 func (sws SwaggerService) produceListing() ResourceListing {
-	listing := ResourceListing{SwaggerVersion: swaggerVersion, ApiVersion: sws.config.ApiVersion, Info: sws.config.Info}
+	listing := ResourceListing{SwaggerVersion: swaggerVersion, ApiVersion: sws.config.ApiVersion, Info: sws.config.Info, Authorizations: sws.config.Authorizations}
 	sws.apiDeclarationMap.Do(func(k string, v ApiDeclaration) {
 		ref := Resource{Path: k}
 		if len(v.Apis) > 0 { // use description of first (could still be empty)
@@ -215,7 +215,8 @@ func (sws SwaggerService) composeDeclaration(ws *restful.WebService, pathPrefix 
 		BasePath:       sws.config.WebServicesUrl,
 		ResourcePath:   pathPrefix,
 		Models:         ModelList{},
-		ApiVersion:     ws.Version()}
+		ApiVersion:     ws.Version(),
+		Authorizations: ws.GetAuthorizations()}
 
 	// collect any path parameters
 	rootParams := []Parameter{}
@@ -234,9 +235,10 @@ func (sws SwaggerService) composeDeclaration(ws *restful.WebService, pathPrefix 
 		voidString := "void"
 		for _, route := range routes {
 			operation := Operation{
-				Method:  route.Method,
-				Summary: route.Doc,
-				Notes:   route.Notes,
+				Method:         route.Method,
+				Summary:        route.Doc,
+				Notes:          route.Notes,
+				Authorizations: ws.GetAuthorizations(),
 				// Type gets overwritten if there is a write sample
 				DataTypeFields:   DataTypeFields{Type: &voidString},
 				Parameters:       []Parameter{},

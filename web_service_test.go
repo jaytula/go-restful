@@ -1,6 +1,7 @@
 package restful
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -193,6 +194,18 @@ func TestContentTypeOctet_Issue170(t *testing.T) {
 	}
 }
 
+func TestPrefixedService(t *testing.T) {
+	tearDown()
+	Add(newPrefixedService())
+	httpRequest, _ := http.NewRequest("GET", "http://here.com/b/admin/get/hollyHope", nil)
+
+	httpWriter := httptest.NewRecorder()
+	DefaultContainer.dispatch(httpWriter, httpRequest)
+	if 200 != httpWriter.Code {
+		t.Errorf("Expected 200, got %d", httpWriter.Code)
+	}
+}
+
 func newPanicingService() *WebService {
 	ws := new(WebService).Path("")
 	ws.Route(ws.GET("/fire").To(doPanic))
@@ -237,6 +250,24 @@ func newSelectedRouteTestingService() *WebService {
 	ws := new(WebService).Path("")
 	ws.Route(ws.GET(pathGetFriends).To(selectedRouteChecker))
 	return ws
+}
+
+func newPrefixedService() *WebService {
+	ws := new(WebService).Path("")
+
+	ws.PathPrefix("/b")
+
+	ws.Path("/admin")
+	ws.Route(ws.GET("/get/{userId}").To(prefixChecker))
+
+	return ws
+}
+
+func prefixChecker(req *Request, resp *Response) {
+	log.Printf("%+v\n", req.pathParameters)
+	if req.PathParameter("userId") != "hollyHope" {
+		resp.InternalServerError()
+	}
 }
 
 func selectedRouteChecker(req *Request, resp *Response) {

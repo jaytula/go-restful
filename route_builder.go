@@ -15,13 +15,14 @@ import (
 
 // RouteBuilder is a helper to construct Routes.
 type RouteBuilder struct {
-	rootPath    string
-	currentPath string
-	produces    []string
-	consumes    []string
-	httpMethod  string        // required
-	function    RouteFunction // required
-	filters     []FilterFunction
+	rootPathPrefix string
+	rootPath       string
+	currentPath    string
+	produces       []string
+	consumes       []string
+	httpMethod     string        // required
+	function       RouteFunction // required
+	filters        []FilterFunction
 	// documentation
 	doc                     string
 	notes                   string
@@ -186,6 +187,10 @@ func (b *RouteBuilder) copyDefaults(rootProduces, rootConsumes []string) {
 	}
 }
 
+func (b *RouteBuilder) copyExtraDefaults(rootPathPrefix string) {
+	b.rootPathPrefix = rootPathPrefix
+}
+
 // Build creates a new Route using the specification details collected by the RouteBuilder
 func (b *RouteBuilder) Build() Route {
 	pathExpr, err := newPathExpression(b.currentPath)
@@ -204,6 +209,7 @@ func (b *RouteBuilder) Build() Route {
 	}
 	route := Route{
 		Method:         b.httpMethod,
+		PathPrefix:     b.rootPathPrefix,
 		Path:           concatPath(b.rootPath, b.currentPath),
 		Produces:       b.produces,
 		Consumes:       b.consumes,

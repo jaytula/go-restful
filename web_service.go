@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/emicklei/go-restful/log"
+	"github.com/emicklei/go-restful/swagger/models"
 )
 
 // Copyright 2013 Ernest Micklei. All rights reserved.
@@ -14,6 +15,7 @@ import (
 
 // WebService holds a collection of Route values that bind a Http Method + URL Path to a function.
 type WebService struct {
+	rootPathPrefix string
 	rootPath       string
 	pathExpr       *pathExpression // cached compilation of rootPath as RegExp
 	routes         []Route
@@ -24,10 +26,17 @@ type WebService struct {
 	documentation  string
 	apiVersion     string
 
-	dynamicRoutes bool
+	dynamicRoutes  bool
+	authorizations models.Authorizations
 
 	// protects 'routes' if dynamic routes are enabled
 	routesLock sync.RWMutex
+}
+
+func NewWebService(prefix string) *WebService {
+	ws := new(WebService)
+	ws.PathPrefix(prefix)
+	return ws
 }
 
 func (w *WebService) SetDynamicRoutes(enable bool) {
@@ -39,7 +48,7 @@ func (w *WebService) compilePathExpression() {
 	if len(w.rootPath) == 0 {
 		w.Path("/") // lazy initialize path
 	}
-	compiled, err := newPathExpression(w.rootPath)
+	compiled, err := newPathExpression(w.rootPathPrefix + w.rootPath)
 	if err != nil {
 		log.Printf("[restful] invalid path:%s because:%v", w.rootPath, err)
 		os.Exit(1)
@@ -53,8 +62,24 @@ func (w *WebService) ApiVersion(apiVersion string) *WebService {
 	return w
 }
 
+// Authorizations sets the Authorizations for this WebService to be used at Swagger API Declaration level
+func (w *WebService) Authorizations(authorizations models.Authorizations) *WebService {
+	w.authorizations = authorizations
+	return w
+}
+
+func (w *WebService) GetAuthorizations() models.Authorizations {
+	return w.authorizations
+}
+
 // Version returns the API version for documentation purposes.
 func (w WebService) Version() string { return w.apiVersion }
+
+//
+func (w *WebService) PathPrefix(prefix string) *WebService {
+	w.rootPathPrefix = prefix
+	return w
+}
 
 // Path specifies the root URL template path of the WebService.
 // All Routes will be relative to this path.
@@ -148,6 +173,7 @@ func (w *WebService) Route(builder *RouteBuilder) *WebService {
 	w.routesLock.Lock()
 	defer w.routesLock.Unlock()
 	builder.copyDefaults(w.produces, w.consumes)
+	builder.copyExtraDefaults(w.rootPathPrefix)
 	w.routes = append(w.routes, builder.Build())
 	return w
 }
@@ -203,6 +229,7 @@ func (w WebService) Routes() []Route {
 
 // RootPath returns the RootPath associated with this WebService. Default "/"
 func (w WebService) RootPath() string {
+	//return w.rootPathPrefix + w.rootPath
 	return w.rootPath
 }
 
