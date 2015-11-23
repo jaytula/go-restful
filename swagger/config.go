@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/jaytula/go-restful"
+	"github.com/jaytula/go-restful/swagger/models"
 )
 
 // PostBuildDeclarationMapFunc can be used to modify the api declaration map.
@@ -32,5 +33,5 @@ type Config struct {
 	// Swagger global info struct
 	Info Info
 	// Provides information about the authorizations schemes allowed on this API.
-	Authorizations AuthorizationsObject
+	Authorizations models.AuthorizationsObject
 }

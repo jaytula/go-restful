@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/jaytula/go-restful"
 	"github.com/jaytula/go-restful/swagger/models"
 	"github.com/jaytula/go-restful/swagger/test_package"
-	"github.com/jaytula/go-restful"
 )
 
 func TestInfoStruct_Issue231(t *testing.T) {
@@ -286,7 +286,7 @@ func TestIssue78(t *testing.T) {
 
 func TestResourceListingAuthorizations(t *testing.T) {
 	config := Config{
-		Authorizations: AuthorizationsObject{"primary": AuthorizationObject{Type: "apiKey", PassAs: "query", Keyname: "api_key"}},
+		Authorizations: models.AuthorizationsObject{"primary": models.AuthorizationObject{Type: "apiKey", PassAs: "query", Keyname: "api_key"}},
 	}
 	sws := newSwaggerService(config)
 	str, err := json.MarshalIndent(sws.produceListing(), "", "    ")
